@@ -41,7 +41,7 @@ cd to_path
 2) Запуск скрипта из cmd:
 
 
-python parseAirtable.py [--username USERNAME] [--password PASSWORD] [--port PORT] [--dbname DBNAME] [--baseid BASEID] [--api_key API_KEY]
+python synchronize.py [--username USERNAME] [--password PASSWORD] [--port PORT] [--dbname DBNAME] [--baseid BASEID] [--api_key API_KEY]
 
 
 Параметры соединения с postgres на ПК клиента:
