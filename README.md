@@ -32,7 +32,15 @@ sqlalchemy 1.3.23
 
 Использование:
 
+1) Переход в директорию to_path с файлом parseAirtable.py:
+
+
 cd to_path
+
+
+2) Запуск скрипта из cmd:
+
+
 python parseAirtable.py [--username USERNAME] [--password PASSWORD] [--port PORT] [--dbname DBNAME] [--baseid BASEID] [--api_key API_KEY]
 
 
