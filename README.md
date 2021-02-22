@@ -2,14 +2,15 @@
 Syncronization of the postgres client db with an airtable db rest api
 
 
-Назначение:
+**Назначение:**
 
-Скрипт предназначен для выгрузки данных из таблицы airtable (https://airtable.com/shrlHQArEK0WNdylo/tblzxpZ9KSX09akd4/viwwEoRm3YKZ4LFbY?blocks=hide) в postges на локальной машине.
+Скрипт предназначен для синхронизации данных таблицы airtable вида (https://airtable.com/shrlHQArEK0WNdylo/tblzxpZ9KSX09akd4/viwwEoRm3YKZ4LFbY?blocks=hide) с базой данных postges на локальной машине.
+Скрипт добавляет/обновляет только те строки, которые имеют все данные. Если какие-то поля пустые, то такие строки будут проигнорированы.
 
 
 
+**Конфигурация ОС и установленного ПО:**
 
-Конфигурация ОС и установленного ПО:
 
 Windows 10;
 
@@ -17,7 +18,9 @@ Postgres 12;
 
 Django 3.1.7;
 
-Зависимости:
+
+**Зависимости:**
+
 
 Python 3.8.3;
 
@@ -30,7 +33,7 @@ sqlalchemy 1.3.23
 
 
 
-Использование:
+**Использование:**
 
 1) Переход в директорию to_path с файлом parseAirtable.py:
 
@@ -44,7 +47,8 @@ cd to_path
 python synchronize.py [--username USERNAME] [--password PASSWORD] [--port PORT] [--dbname DBNAME] [--baseid BASEID] [--api_key API_KEY]
 
 
-Параметры соединения с postgres на ПК клиента:
+
+**Параметры соединения с postgres на ПК клиента:**
 
 
 --username --- имя пользователя;
