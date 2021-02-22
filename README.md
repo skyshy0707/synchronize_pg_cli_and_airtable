@@ -39,9 +39,9 @@ sqlalchemy 1.3.23
 >cd to_django_path
 
 
-2) Запустите команду создания необходимых баз данных:
+2) Запустите команды создания необходимых баз данных:
 
-
+>python manage.py makemigrations
 >python manage.py migrate
 
 
