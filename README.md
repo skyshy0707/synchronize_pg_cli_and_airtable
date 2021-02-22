@@ -59,7 +59,8 @@ python synchronize.py [--username USERNAME] [--password PASSWORD] [--port PORT] 
 
 --dbname --- имя базы данных
 
-Параметры соединения с REST API базы данных Airtable:
+**Параметры соединения с REST API базы данных Airtable:**
+
 
 --baseid --- id базы данных (BaseId);
 
