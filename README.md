@@ -48,7 +48,7 @@ sqlalchemy 1.3.23
 >python manage.py migrate
 
 
-3) Перейдите в директорию *to_path* проекта *synchronize_pg_cli_and_airtable* со скриптом *synchronize.py*:
+3) Перейдите в директорию *to_path* проекта *synchronize_pg_cli_and_airtable* где находится скрипт *synchronize.py*:
 
 
 >cd to_path
