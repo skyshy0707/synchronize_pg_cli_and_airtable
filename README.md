@@ -31,20 +31,30 @@ psycopg2 2.8.6;
 sqlalchemy 1.3.23
 
 
-
-
 **Использование:**
 
-1) Переход в директорию to_path с файлом parseAirtable.py:
+1) Перейдите в директорию to_django_path с проектом django, использующим postgres:
 
 
-cd to_path
+>cd to_django_path
 
 
-2) Запуск скрипта из cmd:
+2) Запустите команду создания необходимых баз данных:
 
 
-python synchronize.py [--username USERNAME] [--password PASSWORD] [--port PORT] [--dbname DBNAME] [--baseid BASEID] [--api_key API_KEY]
+>python manage.py migrate
+
+
+3) Перейдите в директорию to_path с файлом parseAirtable.py:
+
+
+>cd to_path
+
+
+4) Запустите скрипта из cmd:
+
+
+>python synchronize.py [--username USERNAME] [--password PASSWORD] [--port PORT] [--dbname DBNAME] [--baseid BASEID] [--api_key API_KEY]
 
 
 
