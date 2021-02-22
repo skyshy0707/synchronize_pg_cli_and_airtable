@@ -45,6 +45,7 @@ sqlalchemy 1.3.23
 2) Запустите команды создания необходимых баз данных:
 
 >python manage.py makemigrations
+
 >python manage.py migrate
 
 
