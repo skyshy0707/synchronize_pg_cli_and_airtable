@@ -19,7 +19,12 @@ class Therapists_inCloud():
     
     def __init__(self,):
         self.headers = {'Authorization': 'Bearer {}'.format(api_key)}
-        self.params = {"offset": 0,}
+        self.params = {"offset": 0, 
+                       "filterByFormula":
+                           "AND(NOT({Имя} = ''), " + 
+                           "NOT({Фотография} = ''), " + 
+                           "NOT({Методы} = ''))"
+                           }
         self.therapists = []
 
     
@@ -89,7 +94,8 @@ class CreateNewDB():
     def __init__(self, username, password):
         self.username = username
         self.password = password
-        self.conn = self.set_default_connection()
+        self.engine = None
+        self.conn = None
         
     
     def create_connection(self, db_name='postgres'):
@@ -102,9 +108,9 @@ class CreateNewDB():
                                )
                             )
             
-    def connect(self, engine):
+    def connect(self,):
         try:
-            conn = engine.connect()#try to catch exc.OperationalError
+            conn = self.engine.connect()
             conn.execute("COMMIT")
         except exc.OperationalError as e:
             pass
@@ -113,13 +119,19 @@ class CreateNewDB():
         
     
     def set_default_connection(self,):
-        engine = self.create_connection()
-        return self.connect(engine)
+        self.engine = self.create_connection()
+        self.conn = self.connect()
+    
+    def set_new_connection(self, db_name):
+        self.engine = self.create_connection(db_name)
+        self.conn = self.connect()
 
 
     def create_new_db(self, db_name):
+        self.set_default_connection()
         try:
-            self.conn.execute("CREATE DATABASE %s" % db_name) 
+            self.conn.execute("CREATE DATABASE %s" % db_name)
+            self.conn.execute("COMMIT")
         except exc.DatabaseError:
             pass
         except AttributeError:
@@ -151,36 +163,39 @@ class RWD_Therapists_Airtable(object):
     
     def __repr__(self):
         return "<RWD_Therapists_Airtable('%s', '%s')>" % (self.received_data, 
-                                                        self.date_run, 
-                                                        )
+                                                          self.date_run, 
+                                                          )
     
   
 from sqlalchemy.orm import mapper, sessionmaker    
 db = CreateNewDB(username, password)
+
 db.create_new_db(db_name)
+db.set_new_connection(db_name)
+
+engine = db.engine
 conn = db.conn
-engine = db.create_connection(db_name)
 Session = sessionmaker(bind=engine)
 session = Session()
 
 
 
 metadata = MetaData()
-therapists_tab = Table('therapists_therapist', metadata,
+therapists_tab = Table("therapist", metadata,
                        Column('rec_id', String, primary_key=True),
-                       Column('photo', Text),
-                       Column('FIO', String),
-                       Column('methods', JSON),
+                       Column('photo', Text, nullable=False),
+                       Column('FIO', String, nullable=False),
+                       Column('methods', JSON, nullable=False),
                        )
 
 
-rwd_therapists_airtable_tab = Table('rawdata_rawdata', metadata,
+rwd_therapists_airtable_tab = Table('rawdata', metadata,
                                 Column('id', Integer, 
                                        Sequence('rawdata_id_seq'),
                                        primary_key=True,
                                        ),
-                                Column('received_data', JSON),
-                                Column('date_run', DateTime),
+                                Column('received_data', JSON, nullable=False),
+                                Column('date_run', DateTime, nullable=False),
                                 )
 
 
@@ -214,11 +229,15 @@ class Synchronize_pg_with_airtable():
         self.pks_from_airtable = self.get_current_pks_from_airtable()
         
     
+    def get_fields(self, rec):
+        return (rec['id'], 
+                rec['fields']['Фотография'][0]['url'], 
+                rec['fields']['Имя'], 
+                rec['fields']['Методы']
+                )
+    
     def create_therapist(self, rec):
-        rec_id, photo, FIO, methods = (rec['id'], 
-                                       rec['fields']['Фотография'][0]['url'], 
-                                       rec['fields']['Имя'], 
-                                       rec['fields']['Методы'])
+        rec_id, photo, FIO, methods = self.get_fields(rec)
         return Therapist(rec_id, photo, FIO, methods)
     
 
@@ -240,9 +259,9 @@ class Synchronize_pg_with_airtable():
     
     def del_rows(self,):
         for row in self.deleting_rows_by_pk():
-            therapists_tab.delete().\
+            del_ = therapists_tab.delete().\
                 where(therapists_tab.c.rec_id==row[0])
-            conn.execute("COMMIT")
+            conn.execute(del_)
         
     def updating_rows_by_pk(self):
         return set(session.query(Therapist.rec_id).all()).\
@@ -250,9 +269,14 @@ class Synchronize_pg_with_airtable():
             
     def upd_rows(self,):
         for row in self.updating_rows_by_pk():
-            therapists_tab.update().\
-                where(therapists_tab.c.rec_id==row[0])
-            conn.execute("COMMIT")
+            _, photo, FIO, methods = self.get_fields(
+                self.get_raw_therapist(row[0])
+                )
+            upd = therapists_tab.update().\
+                where(therapists_tab.c.rec_id==row[0]).\
+                    values({"photo": photo, "FIO": FIO, "methods": methods})
+            conn.execute(upd)
+            
     
     def adding_rows(self,):
         return set(self.pks_from_airtable).\
@@ -272,6 +296,7 @@ class Synchronize_pg_with_airtable():
             self.upd_rows()
             self.add_rows()
             session.commit()
+            session.close()
             print("Синхронизация данных airtable\\{}\\Psychotherapists c"\
                   " {}.therapist прошла успешно".format(
                       airtable_baseid,
