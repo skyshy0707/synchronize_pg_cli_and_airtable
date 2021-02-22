@@ -36,7 +36,7 @@ sqlalchemy 1.3.23
 
 **Использование:**
 
-1) Перейдите в директорию to_django_path с проектом django, использующим postgres:
+1) Перейдите в директорию *to_django_path* с проектом django, использующим postgres:
 
 
 >cd to_django_path
@@ -48,13 +48,13 @@ sqlalchemy 1.3.23
 >python manage.py migrate
 
 
-3) Перейдите в директорию to_path с файлом parseAirtable.py:
+3) Перейдите в директорию *to_path* проекта *synchronize_pg_cli_and_airtable* со скриптом *synchronize.py*:
 
 
 >cd to_path
 
 
-4) Запустите скрипта из cmd:
+4) Запустите скрипт *synchronize.py* из cmd:
 
 
 >python synchronize.py [--username USERNAME] [--password PASSWORD] [--port PORT] [--dbname DBNAME] [--baseid BASEID] [--api_key API_KEY]
