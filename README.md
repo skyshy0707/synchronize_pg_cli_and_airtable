@@ -39,26 +39,26 @@ sqlalchemy 1.3.23
 1) Перейдите в директорию *to_django_path* с проектом django, использующим postgres:
 
 
->cd to_django_path
+>\>cd to_django_path
 
 
 2) Запустите команды создания необходимых баз данных:
 
->python manage.py makemigrations
+>\>python manage.py makemigrations
 
->python manage.py migrate
+>\>python manage.py migrate
 
 
 3) Перейдите в директорию *to_path* проекта *synchronize_pg_cli_and_airtable* где находится скрипт *synchronize.py*:
 
 
->cd to_path
+>\>cd to_path
 
 
 4) Запустите скрипт *synchronize.py* из cmd:
 
 
->python synchronize.py [--username USERNAME] [--password PASSWORD] [--port PORT] [--dbname DBNAME] [--baseid BASEID] [--api_key API_KEY]
+>\>python synchronize.py [--username USERNAME] [--password PASSWORD] [--port PORT] [--dbname DBNAME] [--baseid BASEID] [--api_key API_KEY]
 
 
 
