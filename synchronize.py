@@ -13,7 +13,7 @@ import requests
 
 from variables import *
 
-
+import time
 
 class Therapists_inCloud():
     
@@ -49,8 +49,16 @@ class Therapists_inCloud():
         return json.loads(raw_data.text)
     
     
-    def get_data(self,rec_id=''):
+    
+    def secure_request(self, rec_id):
         raw_data = self.get_raw_data_fromPage(rec_id)
+        if raw_data.status_code == 429:
+            time.sleep(30)
+            return self.get_raw_data_fromPage(rec_id)
+        return raw_data
+        
+    def get_data(self,rec_id=''):
+        raw_data = self.secure_request(rec_id=rec_id)
         return self.get_json(raw_data)
     
     
